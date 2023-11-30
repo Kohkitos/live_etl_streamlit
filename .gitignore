@@ -1,0 +1,9 @@
+testing/*
+api/*
+
+__pycache__
+.ipynb_checkpoints
+
+passwords.py
+
+*.swp
