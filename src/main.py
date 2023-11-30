@@ -41,7 +41,8 @@ def message(param):
 	params = param.split('-')
 	parts = split_3(params[0])
 
-	# initialize result dictionary
+	# initialize result dictionary and users
+	users = []
 	result = {}
 	result['count'] = 0
 	# if both days are requested
@@ -56,6 +57,11 @@ def message(param):
 			count_name = f'{part}_count'
 			# prepare count
 			count = len(messages)
+			# update users
+			for message in messages:
+				if message['commentator_id'] in users:
+					continue
+				users.append(message['commentator_id'])
 			# update result
 			result[name] = messages
 			result[count_name] = count
@@ -75,19 +81,18 @@ def message(param):
 			count_name = f'{part}_count'
 			# prepare count
 			count = len(messages)
+			# update users
+			for message in messages:
+				if message['commentator_id'] in users:
+					continue
+				users.append(message['commentator_id'])
 			# update result
 			result[name] = messages
 			result[count_name] = count
 			result['count'] += count
 
 	# get the user count	
-	users = []
-	for message in messages:
-		if message['commentator_id'] in users:
-			continue
-		users.append(message['commentator_id'])
-
-	result['users'] = users
+	result['users'] = len(users)
 	return result
 
 def split_3(text):
@@ -111,7 +116,9 @@ with st.container():
     st.sidebar.markdown("## PEDRO SANCHEZ' INVESTMENT LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
 
 # ----- THIS SHOULD BE DONE BY THE SIDEBAR INFO
-data = message("POSNEGNEU-0-0-0")
+sent = "POSNEGNEU"
+data = message(f"{sent}-0-0-0")
+sents = split_3(sent)
 
 # --- CARDS
 with st.container():
@@ -191,3 +198,8 @@ st.write('---')
 
 with st.container():
 	st.markdown('### Messages per Minute')
+	st.line_chart({"POS": data['POS_messages'],
+                    "NEG": data['NEG_messages'],
+					"NEU": data['NEU_messages']},  
+                    use_container_width = True,
+                    color=["#77dd77", "#ff6961", "fdfd96"])
