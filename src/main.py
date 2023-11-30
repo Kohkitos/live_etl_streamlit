@@ -4,37 +4,17 @@
 import streamlit as st
 import pandas as pd
 import plost
+from streamlit_echarts import st_echarts
 ## For connecting to MongoDB
 from pymongo import MongoClient
 from passwords import *
 # For time
 from datetime import datetime
 
-# --- CONFIG
-
-st.set_page_config(page_title="Investment ETL", page_icon=":red_circle:", layout='wide', initial_sidebar_state='expanded')
-
-# CSS
-with open('style.css') as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-# --- DELETE LATER (this will be done by the API)
-
-db = MongoClient(STR_CONN).final_project
-
-# --- SIDEBAR
-with st.container():
-    st.sidebar.markdown("## PEDRO SANCHEZ' INVESTMENT LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
-	
-# --- CARDS
-with st.container():
-	st.markdown('### Metrics')
-
-
-# ------ API FUNCTIONS
-
+# ------- API FUNCTIONS
 def message(param):
-	"""This is a function that returns a JSON serching for the values specified in the param.
+	"""
+	This is a function that returns a JSON serching for the values specified in the param.
 
 	The param should be structure as follows: {SENTIMEN}-{DAY}-{START TIMESTAMP}-{END TIMESTAMP}.
 	{SENTIMENT}: a string with POS, NEG and NEU in any combination (e.g: POSNEG, NEGPOS, POSNEGNEU...)
@@ -95,3 +75,78 @@ def message(param):
 def split_3(text):
     parts = [text[i:i + 3] for i in range(0, len(text), 3)]
     return parts
+
+# --- CONFIG
+
+st.set_page_config(page_title="Investment ETL", page_icon=":red_circle:", layout='wide', initial_sidebar_state='expanded')
+
+# CSS
+with open('style.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+# --- DELETE LATER (this will be done by the API)
+
+db = MongoClient(STR_CONN).final_project
+
+# --- SIDEBAR
+with st.container():
+    st.sidebar.markdown("## PEDRO SANCHEZ' INVESTMENT LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
+	
+# --- CARDS
+with st.container():
+	st.markdown('### Metrics')
+	st.write('---')
+	col1, col2, col3, col4 = st.columns(4)
+	
+	col1.image('../img/user.png', width=50)
+	col1.metric("Users", 42)
+	
+	col2.image('../img/chat.png', width=50)
+	col2.metric("Comments", 42)
+	
+	col3.image('../img/bubble-chat.png', width=50)
+	col3.metric("Average Comments per Minute", 42)
+	
+	col4.metric("Max Comments per Minute", 42)
+	col4.metric("Min Comments per Minute", 42)
+
+st.write('---')
+
+# --- DONUT AND TABLE
+with st.container():
+	donut, table = st.columns([1, 2])
+	with donut:
+		st.markdown('### Sentiment Anal')
+		options = {
+            "tooltip": {"trigger": "item"},
+            "series": [
+                {
+                    "name": "Sentiment",
+                    "type": "pie",
+                    "radius": ["25%", "65%"],
+                    "data": [
+                        {"value": 1048, "name": "lore", "itemStyle": {"color": '#ff6961'}}, # red
+                        {"value": 735, "name": "pito", "itemStyle": {"color": '#fdfd96'}},  # yellow
+                        {"value": 580, "name": "macu", "itemStyle": {"color": '#77dd77'}}   # green
+                    ],
+                    "emphasis": {
+                        "itemStyle": {
+                            "shadowBlur": 10,
+                            "shadowOffsetX": 0,
+                            "shadowColor": "rgba(0, 0, 0, 0.5)",
+                        }
+                    },
+                }
+            ],
+        }
+		st_echarts(options=options, height="300px")
+	
+	with table:
+		jsonillo = message("POSNEGNEU-0-0-0")
+		df = pd.DataFrame(jsonillo['messages'])
+		st.markdown('### Comments')
+		st.dataframe(df)
+
+st.write('---')
+
+# --- LINE CHART
