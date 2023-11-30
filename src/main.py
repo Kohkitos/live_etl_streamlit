@@ -41,22 +41,44 @@ def message(param):
 	params = param.split('-')
 	parts = split_3(params[0])
 
+	# initialize result dictionary
+	result = {}
+	result['count'] = 0
 	# if both days are requested
 	if params[1] == '0':
-		messages = list(db.message.find({'sentiment_analysis': {'$in': parts},
-						 'timestamp': { '$gte':  int(params[2]), '$lte': int(params[3])}
-						 })
-			       )
+		for part in parts:
+			messages = list(db.message.find({'sentiment_analysis': part,
+							'timestamp': { '$gte':  int(params[2]), '$lte': int(params[3])}
+							})
+					)
+			# prepare key names
+			name = f'{part}_messages'
+			count_name = f'{part}_count'
+			# prepare count
+			count = len(messages)
+			# update result
+			result[name] = messages
+			result[count_name] = count
+			result['count'] += count
 		
 	# if only one day is requested
 	else:
 		date = datetime.now().replace(day=int(params[1]), hour=0, minute=0, second=0, microsecond=0)
 		end_date = date.replace(day = int(param[1] + 1))
-
-		messages = list(db.message.find({'sentiment_analysis': {'$in': parts},
-						'timestamp': { '$gt':  params[2], '$lt': params[3]},
-						"date": {"$gte": date, "$lt": end_date}})
-	       )
+		for part in parts:
+			messages = list(db.message.find({'sentiment_analysis': {'$in': parts},
+							'timestamp': { '$gt':  params[2], '$lt': params[3]},
+							"date": {"$gte": date, "$lt": end_date}})
+			)
+			# prepare key names
+			name = f'{part}_messages'
+			count_name = f'{part}_count'
+			# prepare count
+			count = len(messages)
+			# update result
+			result[name] = messages
+			result[count_name] = count
+			result['count'] += count
 
 	# get the user count	
 	users = []
@@ -65,11 +87,7 @@ def message(param):
 			continue
 		users.append(message['commentator_id'])
 
-	result ={
-		'count': len(messages),
-		'users': len(users),
-		'messages': messages
-		}
+	result['users'] = users
 	return result
 
 def split_3(text):
@@ -114,6 +132,21 @@ with st.container():
 st.write('---')
 
 # --- DONUT AND TABLE
+
+def apply_style_to_row(row):
+    if row['sentiment_analysis'] == 'POS':
+        row_style =  ['background-color: #77dd77'] * len(row)
+    elif row['sentiment_analysis'] == 'NEG':
+        row_style =  ['background-color: #ff6961'] * len(row)
+    else:
+        row_style = ['background-color: #fdfd96'] * len(row)
+	
+    message_style = ['color: black'] * len(row)
+    
+    combined_style = [f"{row_style[i]}; {message_style[i]}" for i in range(len(row))]
+    
+    return combined_style
+
 with st.container():
 	donut, table = st.columns([1, 2])
 	with donut:
@@ -146,9 +179,11 @@ with st.container():
 		st_echarts(options=options, height="300px")
 	
 	with table:
-		df = pd.DataFrame(data['messages']).set_index('message')['sentiment_analysis']
+		df = pd.DataFrame(data['messages'])
 		st.markdown('### Comments')
-		st.dataframe(df)
+		df = df[['message', 'sentiment_analysis']]
+		styled_df = df.style.apply(apply_style_to_row, axis=1)
+		st.write(styled_df)
 
 st.write('---')
 
@@ -156,36 +191,3 @@ st.write('---')
 
 with st.container():
 	st.markdown('### Messages per Minute')
-	options = {
-        "tooltip": {"trigger": "axis"},
-        "grid": {"left": "3%", "right": "4%", "bottom": "3%", "containLabel": True},
-        "toolbox": {"feature": {"saveAsImage": {}}},
-        "xAxis": {
-            "type": "category",
-            "boundaryGap": False,
-            "data": ["0", "10", "20", "30", "40", "50", "60"],
-        },
-        "yAxis": {"type": "value"},
-        "series": [
-            {
-                "name": "NEG",
-                "type": "line",
-                "data": [120, 132, 101, 134, 90, 230, 210],
-				"itemStyle": {"color": '#ff6961'}
-            },
-            {
-                "name": "NEU",
-                "type": "line",
-                "data": [220, 182, 191, 234, 290, 330, 310],
-				"itemStyle": {"color": '#fdfd96'}
-            },
-            {
-                "name": "POS",
-                "type": "line",
-                "data": [150, 232, 201, 154, 190, 330, 410],
-				"itemStyle": {"color": '#77dd77'}
-            }
-        ],
-    }
-	
-	st_echarts(options=options, height="400px")
