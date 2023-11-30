@@ -126,9 +126,9 @@ with st.container():
                     "type": "pie",
                     "radius": ["25%", "65%"],
                     "data": [
-                        {"value": 1048, "name": "lore", "itemStyle": {"color": '#ff6961'}}, # red
-                        {"value": 735, "name": "pito", "itemStyle": {"color": '#fdfd96'}},  # yellow
-                        {"value": 580, "name": "macu", "itemStyle": {"color": '#77dd77'}}   # green
+                        {"value": 1048, "name": "NEG", "itemStyle": {"color": '#ff6961'}}, # red
+                        {"value": 735, "name": "NEU", "itemStyle": {"color": '#fdfd96'}},  # yellow
+                        {"value": 580, "name": "POS", "itemStyle": {"color": '#77dd77'}}   # green
                     ],
 					"label": {
 						"color": "white"
@@ -153,3 +153,39 @@ with st.container():
 st.write('---')
 
 # --- LINE CHART
+
+with st.container():
+	st.markdown('### Messages per Minute')
+	options = {
+        "tooltip": {"trigger": "axis"},
+        "grid": {"left": "3%", "right": "4%", "bottom": "3%", "containLabel": True},
+        "toolbox": {"feature": {"saveAsImage": {}}},
+        "xAxis": {
+            "type": "category",
+            "boundaryGap": False,
+            "data": ["0", "10", "20", "30", "40", "50", "60"],
+        },
+        "yAxis": {"type": "value"},
+        "series": [
+            {
+                "name": "NEG",
+                "type": "line",
+                "data": [120, 132, 101, 134, 90, 230, 210],
+				"itemStyle": {"color": '#ff6961'}
+            },
+            {
+                "name": "NEU",
+                "type": "line",
+                "data": [220, 182, 191, 234, 290, 330, 310],
+				"itemStyle": {"color": '#fdfd96'}
+            },
+            {
+                "name": "POS",
+                "type": "line",
+                "data": [150, 232, 201, 154, 190, 330, 410],
+				"itemStyle": {"color": '#77dd77'}
+            }
+        ],
+    }
+	
+	st_echarts(options=options, height="400px")
