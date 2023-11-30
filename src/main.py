@@ -12,11 +12,17 @@ from datetime import datetime
 
 # --- CONFIG
 
-st.set_page_config(page_title='Kohkitos', page_icon=":frog:", layout='wide', initial_sidebar_state='expanded')
+st.set_page_config(page_title="Investment ETL", page_icon=":red_circle:", layout='wide', initial_sidebar_state='expanded')
+
+# CSS
+with open('style.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 # --- DELETE LATER (this will be done by the API)
 
 db = MongoClient(STR_CONN).final_project
+
+# ---
 
 # ------ API FUNCTIONS
 
@@ -43,9 +49,6 @@ def message(param):
 			user_count:			int,
 			messages:			json}
 	"""
-
-    # globals
-    global db
 
 	# split params into parts and split sent into a list
 	params = param.split('-')
