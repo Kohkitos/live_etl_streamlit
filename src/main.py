@@ -3,7 +3,7 @@
 ## For web and plots
 import streamlit as st
 import pandas as pd
-import plost
+import numpy as np
 from streamlit_echarts import st_echarts
 ## For connecting to MongoDB
 from pymongo import MongoClient
@@ -117,7 +117,7 @@ with st.container():
 
 # ----- THIS SHOULD BE DONE BY THE SIDEBAR INFO
 sent = "POSNEGNEU"
-data = message(f"{sent}-0-0-0")
+data = message(f"{sent}-0-0-20")
 sents = split_3(sent)
 
 # --- CARDS
@@ -195,18 +195,35 @@ with st.container():
 		df = df.sort_values(by='date').reset_index(drop=True)
 
 		st.markdown('### Comments')
-		df = df[['message', 'sentiment_analysis']]
-		styled_df = df.style.apply(apply_style_to_row, axis=1)
+		df_2 = df[['message', 'sentiment_analysis']]
+		styled_df = df_2.style.apply(apply_style_to_row, axis=1)
 		st.write(styled_df)
 
 st.write('---')
 
 # --- LINE CHART
+# set-up colours
+colors = {
+    "NEG": "#ff6961",
+    "NEU": "#fdfd96",
+    "POS": "#77dd77"
+}
+
+messages_per_sentiment = {}
+
+for sent in sents:
+	sent_df = df[df['sentiment_analysis'] == sent]
+	message_count = sent_df.groupby('timestamp').size().reset_index(name='count')
+	messages_per_sentiment[sent] = message_count.set_index('timestamp')['count']
+	
+final_df = pd.DataFrame(messages_per_sentiment)
+
+plot_colors = []
+for sent in sents:
+	plot_colors.append(colors[sent])
 
 with st.container():
 	st.markdown('### Messages per Minute')
-	st.line_chart({"POS": data['POS_messages'],
-                    "NEG": data['NEG_messages'],
-					"NEU": data['NEU_messages']},  
-                    use_container_width = True,
-                    color=["#77dd77", "#ff6961", "fdfd96"])
+	st.line_chart(final_df, 
+                use_container_width=True,
+				color=plot_colors)
