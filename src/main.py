@@ -22,7 +22,14 @@ with open('style.css') as f:
 
 db = MongoClient(STR_CONN).final_project
 
-# ---
+# --- SIDEBAR
+with st.container():
+    st.sidebar.markdown("## PEDRO SANCHEZ' INVESTMENT LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
+	
+# --- CARDS
+with st.container():
+	st.markdown('### Metrics')
+
 
 # ------ API FUNCTIONS
 
