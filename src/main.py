@@ -186,7 +186,14 @@ with st.container():
 		st_echarts(options=options, height="300px")
 	
 	with table:
-		df = pd.DataFrame(data['messages'])
+		# prepare dataframe with possible sents
+		df = pd.DataFrame()
+		for sent in sents:
+			key = f"{sent}_messages"
+			part_df = pd.DataFrame(data[key])
+			df = pd.concat([df, part_df], ignore_index=True)
+		df = df.sort_values(by='date').reset_index(drop=True)
+
 		st.markdown('### Comments')
 		df = df[['message', 'sentiment_analysis']]
 		styled_df = df.style.apply(apply_style_to_row, axis=1)
