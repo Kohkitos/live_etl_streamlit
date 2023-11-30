@@ -91,21 +91,22 @@ db = MongoClient(STR_CONN).final_project
 # --- SIDEBAR
 with st.container():
     st.sidebar.markdown("## PEDRO SANCHEZ' INVESTMENT LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
-	
+
+# ----- THIS SHOULD BE DONE BY THE SIDEBAR INFO
+data = message("POSNEGNEU-0-0-0")
+
 # --- CARDS
 with st.container():
-	st.markdown('### Metrics')
-	st.write('---')
 	col1, col2, col3, col4 = st.columns(4)
 	
 	col1.image('../img/user.png', width=50)
-	col1.metric("Users", 42)
+	col1.metric("Users", data['users'])
 	
 	col2.image('../img/chat.png', width=50)
-	col2.metric("Comments", 42)
+	col2.metric("Comments", data['count'])
 	
 	col3.image('../img/bubble-chat.png', width=50)
-	col3.metric("Average Comments per Minute", 42)
+	col3.metric("Average Comments per Minute", data['count'])
 	
 	col4.metric("Max Comments per Minute", 42)
 	col4.metric("Min Comments per Minute", 42)
@@ -129,6 +130,9 @@ with st.container():
                         {"value": 735, "name": "pito", "itemStyle": {"color": '#fdfd96'}},  # yellow
                         {"value": 580, "name": "macu", "itemStyle": {"color": '#77dd77'}}   # green
                     ],
+					"label": {
+						"color": "white"
+                    },
                     "emphasis": {
                         "itemStyle": {
                             "shadowBlur": 10,
@@ -142,8 +146,7 @@ with st.container():
 		st_echarts(options=options, height="300px")
 	
 	with table:
-		jsonillo = message("POSNEGNEU-0-0-0")
-		df = pd.DataFrame(jsonillo['messages'])
+		df = pd.DataFrame(data['messages']).set_index('message')['sentiment_analysis']
 		st.markdown('### Comments')
 		st.dataframe(df)
 
