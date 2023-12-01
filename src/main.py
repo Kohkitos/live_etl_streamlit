@@ -45,12 +45,12 @@ def message_15(param):
 	result = {}
 	result['count'] = 0
 
-	date = datetime.now().replace(day=15, hour=0, minute=0, second=0, microsecond=0)
-	end_date = date.replace(day = 17)
+	date = 1700041186843002
+	end_date = 1700123057937759
 	for part in parts:
-		messages = list(db.message.find({'sentiment_analysis': {'$in': parts},
-						'timestamp': { '$gt':  params[1], '$lt': params[2]},
-						"date": {"$gte": date, "$lt": end_date}})
+		messages = list(db.message.find({'sentiment_analysis': part,
+						'timestamp': { '$gte':  int(params[1]), '$lte': int(params[2])},
+						"unix": {"$gte": date, "$lt": end_date}})
 		)
 		# prepare key names
 		name = f'{part}_messages'
@@ -104,12 +104,11 @@ def message_16(param):
 	result = {}
 	result['count'] = 0
 
-	date = datetime.now().replace(day=16, hour=0, minute=0, second=0, microsecond=0)
-	end_date = date.replace(day = 17)
+	date = 1700123057937759
 	for part in parts:
-		messages = list(db.message.find({'sentiment_analysis': {'$in': parts},
-						'timestamp': { '$gt':  params[1], '$lt': params[2]},
-						"date": {"$gte": date, "$lt": end_date}})
+		messages = list(db.message.find({'sentiment_analysis': part,
+						'timestamp': { '$gte':  int(params[1]), '$lte': int(params[2])},
+						"unix": {"$gte": date}})
 		)
 		# prepare key names
 		name = f'{part}_messages'
@@ -213,24 +212,25 @@ try:
 	start = min(start_15, start_16)
 	end = max(end_15, end_16)
 
-	data_15 = message_15(f"{sent}-{start}-{end}")
-	data_16 = message_16(f"{sent}-{start}-{end}")
+	data_15 = message_15(f"{sent}-{start_15}-{end_15}")
+	data_16 = message_16(f"{sent}-{start_16}-{end_16}")
 	# cards info
 	users = data_15['users'] + data_16['users']
 	count = data_15['count'] + data_16['count']
+	st.write(f'{data_15}')
 except:
 	try:
 		total_minutes = end_15 - start_15
 		start = start_15
 		end = end_15
-		data = message_15(f"{sent}-{start}-{end}")
+		data = message_15(f"{sent}-{start_15}-{end_15}")
 
 		users = data_15['users']
 	except:
 		total_minutes = end_16 - start_16
 		start = start_16
 		end = end_16
-		data = message_16(f"{sent}-{start}-{end}")
+		data = message_16(f"{sent}-{start_16}-{end_16}")
 	# cards info
 	users = data['users']
 	count = data['count']
