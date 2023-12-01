@@ -10,6 +10,8 @@ from pymongo import MongoClient
 from passwords import *
 # For time
 from datetime import datetime, timedelta
+# For graphics options
+from options import donut_option
 
 # ------- API FUNCTIONS (delete later)
 def message_15(param):
@@ -217,22 +219,30 @@ try:
 	# cards info
 	users = data_15['users'] + data_16['users']
 	count = data_15['count'] + data_16['count']
+	# donut info
+	total_pos = len(data_15['POS_messages']) + len(data_16['POS_messages'])
+	total_neu = len(data_15['NEU_messages']) + len(data_16['NEU_messages'])
+	total_neg = len(data_15['NEG_messages']) + len(data_16['NEG_messages'])
 except:
 	try:
 		total_minutes = end_15 - start_15
 		start = start_15
 		end = end_15
 		data = message_15(f"{sent}-{start_15}-{end_15}")
-
 		users = data_15['users']
 	except:
 		total_minutes = end_16 - start_16
 		start = start_16
 		end = end_16
 		data = message_16(f"{sent}-{start_16}-{end_16}")
+		users = data_15['users']
 	# cards info
 	users = data['users']
 	count = data['count']
+	# donut info
+	total_pos = len(data['POS_messages'])
+	total_neu = len(data['NEU_messages'])
+	total_neg = len(data['NEG_messages'])
 
 
 # --- CARDS
@@ -273,32 +283,8 @@ def apply_style_to_row(row):
 with st.container():
 	donut, table = st.columns([1, 2])
 	with donut:
+		options = donut_option()
 		st.markdown('### Sentiment Anal')
-		options = {
-            "tooltip": {"trigger": "item"},
-            "series": [
-                {
-                    "name": "Sentiment",
-                    "type": "pie",
-                    "radius": ["25%", "65%"],
-                    "data": [
-                        {"value": len(data['NEG_messages']), "name": "NEG", "itemStyle": {"color": '#ff6961'}}, 	# red
-                        {"value": len(data['NEU_messages']), "name": "NEU", "itemStyle": {"color": '#fdfd96'}},  	# yellow
-                        {"value": len(data['POS_messages']), "name": "POS", "itemStyle": {"color": '#77dd77'}}   	# green
-                    ],
-					"label": {
-						"color": "white"
-                    },
-                    "emphasis": {
-                        "itemStyle": {
-                            "shadowBlur": 10,
-                            "shadowOffsetX": 0,
-                            "shadowColor": "rgba(0, 0, 0, 0.5)",
-                        }
-                    },
-                }
-            ],
-        }
 		st_echarts(options=options, height="300px")
 	
 	with table:
