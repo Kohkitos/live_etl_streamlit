@@ -235,9 +235,9 @@ with st.container():
                     "type": "pie",
                     "radius": ["25%", "65%"],
                     "data": [
-                        {"value": 1048, "name": "NEG", "itemStyle": {"color": '#ff6961'}}, # red
-                        {"value": 735, "name": "NEU", "itemStyle": {"color": '#fdfd96'}},  # yellow
-                        {"value": 580, "name": "POS", "itemStyle": {"color": '#77dd77'}}   # green
+                        {"value": len(data['NEG_messages']), "name": "NEG", "itemStyle": {"color": '#ff6961'}}, 	# red
+                        {"value": len(data['NEU_messages']), "name": "NEU", "itemStyle": {"color": '#fdfd96'}},  	# yellow
+                        {"value": len(data['POS_messages']), "name": "POS", "itemStyle": {"color": '#77dd77'}}   	# green
                     ],
 					"label": {
 						"color": "white"
