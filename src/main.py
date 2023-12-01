@@ -12,29 +12,28 @@ from passwords import *
 from datetime import datetime, timedelta
 
 # ------- API FUNCTIONS (delete later)
-def message(param):
+def message_15(param):
 	"""
 	This is a function that returns a JSON serching for the values specified in the param.
 
-	The param should be structure as follows: {SENTIMEN}-{DAY}-{START TIMESTAMP}-{END TIMESTAMP}.
+	The param should be structure as follows: {SENTIMEN}-{START TIMESTAMP}-{END TIMESTAMP}.
 	{SENTIMENT}: a string with POS, NEG and NEU in any combination (e.g: POSNEG, NEGPOS, POSNEGNEU...)
-	{DAY}: the day to look for, currently either 15 or 16; 0 will look for both days.
 	{START TIMESTAMP}: from what time you want to look or in minutes (e.g: 5, 9, 0...)
 	{END TIMESTAMP}: to what time you want to look or in minutes (e.g: 5, 9, 0...)
 
 	Example of params:
-		POSNEGNEU-O-O-1000 	(this param will return every message).
-		POS-15-20-25		(this param will return positive messages on day 15 from minute 20 to 25)
-		NEUNEG-0-0-30		(this param will return neutral and negative message from both days from the beggining to minute 30)
+		POSNEGNEU-O-1000 	(this param will return every message).
+		POS-20-25			(this param will return positive messages on day 15 from minute 20 to 25)
+		NEUNEG-0-30			(this param will return neutral and negative message from both days from the beggining to minute 30)
 
 	Args:
 		param (str): a string with the data to request.
 
 	Returns:
 		json: a JSON with the data requested as follows:
-			{message_count: 	int,
-			user_count:			int,
-			messages:			json}
+			{message_count: 		int,
+			user_count:				int,
+			SENT_messages:			json}
 	"""
 
 	# split params into parts and split sent into a list
@@ -45,51 +44,87 @@ def message(param):
 	users = []
 	result = {}
 	result['count'] = 0
-	# if both days are requested
-	if params[1] == '0':
-		for part in parts:
-			messages = list(db.message.find({'sentiment_analysis': part,
-							'timestamp': { '$gte':  int(params[2]), '$lte': int(params[3])}
-							})
-					)
-			# prepare key names
-			name = f'{part}_messages'
-			count_name = f'{part}_count'
-			# prepare count
-			count = len(messages)
-			# update users
-			for message in messages:
-				if message['commentator_id'] in users:
-					continue
-				users.append(message['commentator_id'])
-			# update result
-			result[name] = messages
-			result[count_name] = count
-			result['count'] += count
-		
-	# if only one day is requested
-	else:
-		date = datetime.now().replace(day=int(params[1]), hour=0, minute=0, second=0, microsecond=0)
-		end_date = date.replace(day = int(param[1] + 1))
-		for part in parts:
-			messages = list(db.message.find({'sentiment_analysis': {'$in': parts},
-							'timestamp': { '$gt':  params[2], '$lt': params[3]},
-							"date": {"$gte": date, "$lt": end_date}})
-			)
-			# prepare key names
-			name = f'{part}_messages'
-			count_name = f'{part}_count'
-			# prepare count
-			count = len(messages)
-			# update users
-			for message in messages:
-				if message['commentator_id'] in users:
-					continue
-				users.append(message['commentator_id'])
-			# update result
-			result[name] = messages
-			result[count_name] = count
-			result['count'] += count
+
+	date = datetime.now().replace(day=15, hour=0, minute=0, second=0, microsecond=0)
+	end_date = date.replace(day = 17)
+	for part in parts:
+		messages = list(db.message.find({'sentiment_analysis': {'$in': parts},
+						'timestamp': { '$gt':  params[1], '$lt': params[2]},
+						"date": {"$gte": date, "$lt": end_date}})
+		)
+		# prepare key names
+		name = f'{part}_messages'
+		count_name = f'{part}_count'
+		# prepare count
+		count = len(messages)
+		# update users
+		for message in messages:
+			if message['commentator_id'] in users:
+				continue
+			users.append(message['commentator_id'])
+		# update result
+		result[name] = messages
+		result[count_name] = count
+		result['count'] += count
+
+	# get the user count	
+	result['users'] = len(users)
+	return result
+
+def message_16(param):
+	"""
+	This is a function that returns a JSON serching for the values specified in the param.
+
+	The param should be structure as follows: {SENTIMEN}-{START TIMESTAMP}-{END TIMESTAMP}.
+	{SENTIMENT}: a string with POS, NEG and NEU in any combination (e.g: POSNEG, NEGPOS, POSNEGNEU...)
+	{START TIMESTAMP}: from what time you want to look or in minutes (e.g: 5, 9, 0...)
+	{END TIMESTAMP}: to what time you want to look or in minutes (e.g: 5, 9, 0...)
+
+	Example of params:
+		POSNEGNEU-O-1000 	(this param will return every message).
+		POS-20-25			(this param will return positive messages on day 15 from minute 20 to 25)
+		NEUNEG-0-30			(this param will return neutral and negative message from both days from the beggining to minute 30)
+
+	Args:
+		param (str): a string with the data to request.
+
+	Returns:
+		json: a JSON with the data requested as follows:
+			{message_count: 		int,
+			user_count:				int,
+			SENT_messages:			json}
+	"""
+
+	# split params into parts and split sent into a list
+	params = param.split('-')
+	parts = split_3(params[0])
+
+	# initialize result dictionary and users
+	users = []
+	result = {}
+	result['count'] = 0
+
+	date = datetime.now().replace(day=16, hour=0, minute=0, second=0, microsecond=0)
+	end_date = date.replace(day = 17)
+	for part in parts:
+		messages = list(db.message.find({'sentiment_analysis': {'$in': parts},
+						'timestamp': { '$gt':  params[1], '$lt': params[2]},
+						"date": {"$gte": date, "$lt": end_date}})
+		)
+		# prepare key names
+		name = f'{part}_messages'
+		count_name = f'{part}_count'
+		# prepare count
+		count = len(messages)
+		# update users
+		for message in messages:
+			if message['commentator_id'] in users:
+				continue
+			users.append(message['commentator_id'])
+		# update result
+		result[name] = messages
+		result[count_name] = count
+		result['count'] += count
 
 	# get the user count	
 	result['users'] = len(users)
@@ -168,39 +203,52 @@ with st.container():
             value=(timestamps[16]['start'], timestamps[16]['finish']))
 
 # ---- PREPARE INFO
+sent = "NEGPOSNEU"
+sents = split_3(sent)
+
 try:
 	total_minutes_15 = end_15 - start_15
 	total_minutes_16 = end_16 - start_16
 	total_minutes = (total_minutes_16 + total_minutes_15) // 2
 	start = min(start_15, start_16)
 	end = max(end_15, end_16)
+
+	data_15 = message_15(f"{sent}-{start}-{end}")
+	data_16 = message_16(f"{sent}-{start}-{end}")
+	# cards info
+	users = data_15['users'] + data_16['users']
+	count = data_15['count'] + data_16['count']
 except:
 	try:
 		total_minutes = end_15 - start_15
 		start = start_15
 		end = end_15
+		data = message_15(f"{sent}-{start}-{end}")
+
+		users = data_15['users']
 	except:
 		total_minutes = end_16 - start_16
 		start = start_16
 		end = end_16
+		data = message_16(f"{sent}-{start}-{end}")
+	# cards info
+	users = data['users']
+	count = data['count']
 
-# ----- THIS SHOULD BE DONE BY THE SIDEBAR INFO
-sent = "NEGPOSNEU"
-data = message(f"{sent}-0-{start}-{end}")
-sents = split_3(sent)
 
 # --- CARDS
+
 with st.container():
 	col1, col2, col3, col4 = st.columns(4)
 	
 	col1.image('../img/user.png', width=50)
-	col1.metric("Users", data['users'])
+	col1.metric("Users", users)
 	
 	col2.image('../img/chat.png', width=50)
-	col2.metric("Comments", data['count'])
+	col2.metric("Comments", users)
 	
 	col3.image('../img/bubble-chat.png', width=50)
-	col3.metric("Average Comments per Minute", data['count'] // total_minutes)
+	col3.metric("Average Comments per Minute", count // total_minutes)
 	
 	col4.metric("Max Comments per Minute", 42)
 	col4.metric("Min Comments per Minute", 42)
