@@ -11,7 +11,7 @@ from passwords import *
 # For time
 from datetime import datetime
 
-# ------- API FUNCTIONS
+# ------- API FUNCTIONS (delete later)
 def message(param):
 	"""
 	This is a function that returns a JSON serching for the values specified in the param.
@@ -116,7 +116,7 @@ with st.container():
     st.sidebar.markdown("## PEDRO SANCHEZ' INVESTMENT LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
 
 # ----- THIS SHOULD BE DONE BY THE SIDEBAR INFO
-sent = "POSNEGNEU"
+sent = "NEGPOSNEU"
 data = message(f"{sent}-0-0-20")
 sents = split_3(sent)
 
@@ -192,10 +192,10 @@ with st.container():
 			key = f"{sent}_messages"
 			part_df = pd.DataFrame(data[key])
 			df = pd.concat([df, part_df], ignore_index=True)
-		df = df.sort_values(by='date').reset_index(drop=True)
+		sort_df = df.sort_values(by='date').reset_index(drop=True)
 
 		st.markdown('### Comments')
-		df_2 = df[['message', 'sentiment_analysis']]
+		df_2 = sort_df[['message', 'sentiment_analysis']]
 		styled_df = df_2.style.apply(apply_style_to_row, axis=1)
 		st.write(styled_df)
 
@@ -219,8 +219,16 @@ for sent in sents:
 final_df = pd.DataFrame(messages_per_sentiment)
 
 plot_colors = []
-for sent in sents:
-	plot_colors.append(colors[sent])
+used_sents = []
+for i,row in sort_df.iterrows():
+	sent = row['sentiment_analysis']
+	if sent not in used_sents:
+		used_sents.append(sent)
+		plot_colors.append(colors[sent])
+	
+	if len(used_sents) == len(sents):
+		break
+	
 
 with st.container():
 	st.markdown('### Messages per Minute')
