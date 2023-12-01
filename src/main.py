@@ -167,9 +167,26 @@ with st.container():
             options=day_16,
             value=(timestamps[16]['start'], timestamps[16]['finish']))
 
+# ---- PREPARE INFO
+try:
+	total_minutes_15 = end_15 - start_15
+	total_minutes_16 = end_16 - start_16
+	total_minutes = (total_minutes_16 + total_minutes_15) // 2
+	start = min(start_15, start_16)
+	end = max(end_15, end_16)
+except:
+	try:
+		total_minutes = end_15 - start_15
+		start = start_15
+		end = end_15
+	except:
+		total_minutes = end_16 - start_16
+		start = start_16
+		end = end_16
+
 # ----- THIS SHOULD BE DONE BY THE SIDEBAR INFO
 sent = "NEGPOSNEU"
-data = message(f"{sent}-0-0-20")
+data = message(f"{sent}-0-{start}-{end}")
 sents = split_3(sent)
 
 # --- CARDS
@@ -183,7 +200,7 @@ with st.container():
 	col2.metric("Comments", data['count'])
 	
 	col3.image('../img/bubble-chat.png', width=50)
-	col3.metric("Average Comments per Minute", data['count'])
+	col3.metric("Average Comments per Minute", data['count'] // total_minutes)
 	
 	col4.metric("Max Comments per Minute", 42)
 	col4.metric("Min Comments per Minute", 42)
