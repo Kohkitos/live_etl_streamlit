@@ -336,6 +336,7 @@ final_df = pd.DataFrame(messages_per_sentiment)
 
 plot_colors = []
 used_sents = []
+
 for i,row in sort_df.iterrows():
 	sent = row['sentiment_analysis']
 	if sent not in used_sents:
