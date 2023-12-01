@@ -217,7 +217,6 @@ try:
 	# cards info
 	users = data_15['users'] + data_16['users']
 	count = data_15['count'] + data_16['count']
-	st.write(f'{data_15}')
 except:
 	try:
 		total_minutes = end_15 - start_15
@@ -245,7 +244,7 @@ with st.container():
 	col1.metric("Users", users)
 	
 	col2.image('../img/chat.png', width=50)
-	col2.metric("Comments", users)
+	col2.metric("Comments", count)
 	
 	col3.image('../img/bubble-chat.png', width=50)
 	col3.metric("Average Comments per Minute", count // total_minutes)
