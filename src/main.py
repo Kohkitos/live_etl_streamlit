@@ -9,7 +9,7 @@ from streamlit_echarts import st_echarts
 from pymongo import MongoClient
 from passwords import *
 # For time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # ------- API FUNCTIONS (delete later)
 def message(param):
@@ -99,6 +99,26 @@ def split_3(text):
     parts = [text[i:i + 3] for i in range(0, len(text), 3)]
     return parts
 
+def get_timestamps(colec):
+    dates = [datetime(2023, 11, 15, 0, 0, 0), datetime(2023, 11, 16, 0, 0, 0)]
+    res = {}
+
+    for date in dates:
+        next_day = date + timedelta(days=1)
+        docs = colec.find({
+            'date': {
+                '$gte': date,
+                '$lt': next_day
+            }
+        })
+
+        ordered = sorted(docs, key=lambda x: x['timestamp'] if 'timestamp' in x else 0)
+        res[date.day] = {
+            'start': ordered[0]['timestamp'] if ordered else None,
+            'finish': ordered[-1]['timestamp'] if ordered else None
+        }
+
+    return res
 # --- CONFIG
 
 st.set_page_config(page_title="Investment ETL", page_icon=":red_circle:", layout='wide', initial_sidebar_state='expanded')
@@ -112,8 +132,23 @@ with open('style.css') as f:
 db = MongoClient(STR_CONN).final_project
 
 # --- SIDEBAR
+
+timestamps = get_timestamps(db.message)
+day_15 = [x for x in range(timestamps[15]['start'], timestamps[15]['finish'] + 1)]
+day_16 = [x for x in range(timestamps[16]['start'], timestamps[16]['finish'] + 1)]
+
 with st.container():
     st.sidebar.markdown("## PEDRO SANCHEZ' INVESTMENT LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
+	
+    start_15, end_15 = st.sidebar.select_slider(
+        "Select timestamp's range from day 15",
+        options=day_15,
+		value = (timestamps[15]['start'], timestamps[15]['finish']))
+	
+    start_16, end_16 = st.sidebar.select_slider(
+        "Select timestamp's range from day 16",
+        options=day_16,
+		value = (timestamps[16]['start'], timestamps[16]['finish']))
 
 # ----- THIS SHOULD BE DONE BY THE SIDEBAR INFO
 sent = "NEGPOSNEU"
