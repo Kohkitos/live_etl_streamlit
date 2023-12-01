@@ -133,22 +133,39 @@ db = MongoClient(STR_CONN).final_project
 
 # --- SIDEBAR
 
+# get timestamps
 timestamps = get_timestamps(db.message)
 day_15 = [x for x in range(timestamps[15]['start'], timestamps[15]['finish'] + 1)]
 day_16 = [x for x in range(timestamps[16]['start'], timestamps[16]['finish'] + 1)]
+# set default day to both
+day = 'both'
+
 
 with st.container():
     st.sidebar.markdown("## PEDRO SANCHEZ' INVESTMENT LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
-	
-    start_15, end_15 = st.sidebar.select_slider(
-        "Select timestamp's range from day 15",
-        options=day_15,
-		value = (timestamps[15]['start'], timestamps[15]['finish']))
-	
-    start_16, end_16 = st.sidebar.select_slider(
-        "Select timestamp's range from day 16",
-        options=day_16,
-		value = (timestamps[16]['start'], timestamps[16]['finish']))
+    
+    col1, col2, col3 = st.sidebar.columns(3)
+    
+    if col1.button('Day 15'):
+        day = '15'
+    if col2.button('Day 16'):
+        day = '16'
+    if col3.button('Both'):
+        day = 'both'
+
+    st.sidebar.markdown(f'#### The day selected is {day}')
+
+    if day != '16':
+        start_15, end_15 = st.sidebar.select_slider(
+            "Select timestamp's range from day 15",
+            options=day_15,
+            value=(timestamps[15]['start'], timestamps[15]['finish']))
+
+    if day != '15':
+        start_16, end_16 = st.sidebar.select_slider(
+            "Select timestamp's range from day 16",
+            options=day_16,
+            value=(timestamps[16]['start'], timestamps[16]['finish']))
 
 # ----- THIS SHOULD BE DONE BY THE SIDEBAR INFO
 sent = "NEGPOSNEU"
