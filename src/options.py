@@ -112,6 +112,6 @@ class web_data():
 
             if len(self.data_15['NEG_messages']) >= 0 or len(self.data_16['NEG_messages']) >= 0:
                 self.message_count['NEG'] = len(self.data_15['NEG_messages']) + len(self.data_16['NEG_messages'])
-                self.data['NEG_messages'] = self.data_15('NEG_messages') + self.data_16('NEG_messages')
+                self.data['NEG_messages'] = self.data_15['NEG_messages'] + self.data_16['NEG_messages']
         else:
             # moviditas
