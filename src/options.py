@@ -75,10 +75,12 @@ class web_data():
         if start_16 <= 0:
             self.days = 0
             start, end = start_15, end_15
+            self.data = message_15(f"{sent}-{start_15}-{end_15}")
 
         elif start_15 <= 0:
             self.days = 0
             start, end = start_16, end_16
+            self.data = message_16(f"{sent}-{start_16}-{end_16}")
 
         else:
             self.days = 1
@@ -103,16 +105,33 @@ class web_data():
             self.message_count = {'POS': -1, 'NEU': -1, 'NEG': -1}
             self.data = {'POS_messages': -1, 'NEU_messages': -1, 'NEG_messages': -1}
             # for pos
-            if len(self.data_15['POS_messages']) >= 0 or len(self.data_16['POS_messages']) >= 0:
+            if (len(self.data_15['POS_messages']) > 0) or (len(self.data_16['POS_messages']) > 0):
                 self.message_count['POS'] = len(self.data_15['POS_messages']) + len(self.data_16['POS_messages'])
                 self.data['POS_MESSAGES'] = self.data_15['POS_messages'] + self.data_16['POS_messages']
             # for neu
-            if len(self.data_15['NEU_messages']) >= 0 or len(self.data_16['NEU_messages']) >= 0:
+            if (len(self.data_15['NEU_messages']) > 0) or (len(self.data_16['NEU_messages']) > 0):
                 self.message_count['NEU'] = len(self.data_15['NEU_messages']) + len(self.data_16['NEU_messages'])
                 self.data['NEU_messages'] = self.data_15['NEU_messages'] + self.data_16['NEU_messages']
             # for neg
-            if len(self.data_15['NEG_messages']) >= 0 or len(self.data_16['NEG_messages']) >= 0:
+            if (len(self.data_15['NEG_messages']) > 0) or (len(self.data_16['NEG_messages']) > 0):
                 self.message_count['NEG'] = len(self.data_15['NEG_messages']) + len(self.data_16['NEG_messages'])
                 self.data['NEG_messages'] = self.data_15['NEG_messages'] + self.data_16['NEG_messages']
         else:
-            # moviditas
+            # data for later
+            self.total_minutes = end - start
+            # cards info
+            self.users = self.data['users']
+            self.count = self.data['count']
+            counts = max_min_comments(start, end)
+            self.maxim = counts['max_comments']['count']
+            self.minim = counts['min_comments']['count']
+            # donut info
+            self.message_count = {'POS': -1, 'NEU': -1, 'NEG': -1}
+            if len(self.data['POS_messages']) > 0:
+                self.message_count['POS'] = len(self.data['POS_messages'])
+            # for neu
+            if len(self.data['NEU_messages']) > 0:
+                self.message_count['NEU'] = len(self.data['NEU_messages'])
+            # for neg
+            if len(self.data['NEG_messages']) > 0:
+                self.message_count['NEG'] = len(self.data['NEG_messages'])

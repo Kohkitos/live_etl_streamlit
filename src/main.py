@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from streamlit_echarts import st_echarts
 # For graphics options
-from options import donut_option
+from options import donut_option, web_data
 
 #delete later
 from api import *
@@ -50,19 +50,25 @@ with st.container():
             "Select timestamp's range from day 15",
             options=day_15,
             value=(timestamps[15]['start'], timestamps[15]['finish']))
+        start_16, end_16 = -1, -1
 
     if day != '15':
         start_16, end_16 = st.sidebar.select_slider(
             "Select timestamp's range from day 16",
             options=day_16,
             value=(timestamps[16]['start'], timestamps[16]['finish']))
+        start_15, end_15 = -1, -1
+
+
 		
     # Sentiment selector
     sents = st.sidebar.multiselect('Select lines to display:', ['POS', 'NEG', 'NEU'], default=['POS', 'NEG', 'NEU'])
 
 # ---- PREPARE INFO
 sent = ''.join(sents)
-try:
+
+data = web_data(sent, start_15, start_16, end_15, end_16)
+""" try:
 	total_minutes_15 = end_15 - start_15
 	total_minutes_16 = end_16 - start_16
 	total_minutes = total_minutes_16 + total_minutes_15
@@ -94,14 +100,12 @@ except:
 		start = start_15
 		end = end_15
 		data = message_15(f"{sent}-{start_15}-{end_15}")
-		users = data['users']
 		counts = max_min_comments(start_15, end_15)
 	except:
 		total_minutes = end_16 - start_16
 		start = start_16
 		end = end_16
 		data = message_16(f"{sent}-{start_16}-{end_16}")
-		users = data['users']
 		counts = max_min_comments(start_16, end_16)
 	# cards info
 	users = data['users']
@@ -111,7 +115,7 @@ except:
 	# donut info
 	total_pos = len(data['POS_messages'])
 	total_neu = len(data['NEU_messages'])
-	total_neg = len(data['NEG_messages'])
+	total_neg = len(data['NEG_messages']) """
 
 
 
@@ -122,16 +126,16 @@ with st.container():
 	col1, col2, col3, col4 = st.columns(4)
 	
 	col1.image('../img/user.png', width=50)
-	col1.metric("Users", users)
+	col1.metric("Users", data.users)
 	
 	col2.image('../img/chat.png', width=50)
-	col2.metric("Comments", count)
+	col2.metric("Comments", data.count)
 	
 	col3.image('../img/bubble-chat.png', width=50)
-	col3.metric("Average Comments per Minute", count // total_minutes)
+	col3.metric("Average Comments per Minute", data.count // data.total_minutes)
 	
-	col4.metric("Max Comments per Minute", maxim)
-	col4.metric("Min Comments per Minute", minim)
+	col4.metric("Max Comments per Minute", data.maxim)
+	col4.metric("Min Comments per Minute", data.minim)
 
 st.write('---')
 
@@ -154,7 +158,7 @@ def apply_style_to_row(row):
 with st.container():
 	donut, table = st.columns([1, 2])
 	with donut:
-		options = donut_option(total_pos, total_neg, total_neu)
+		options = donut_option(data.message_count['POS'], data.message_count['NEG'], data.message_count['NEU'])
 		st.markdown('### Sentiment Analysis')
 		st_echarts(options=options, height="300px")
 	
