@@ -12,17 +12,17 @@ def donut_option(pos, neg, neu):
         _type_: _description_
     """
 
-    if pos == 0:
+    if pos == -1:
         data = [
                 {"value": neg, "name": "NEG", "itemStyle": {"color": '#ff6961'}},
                 {"value": neu, "name": "NEU", "itemStyle": {"color": '#fdfd96'}}
                 ]
-    elif neg == 0:
+    elif neg == -1:
         data = [
                 {"value": neu, "name": "NEU", "itemStyle": {"color": '#fdfd96'}},
                 {"value": pos, "name": "POS", "itemStyle": {"color": '#77dd77'}}
                 ]
-    elif neu == 0:
+    elif neu == -1:
         data = [
                 {"value": neg, "name": "NEG", "itemStyle": {"color": '#ff6961'}},
                 {"value": pos, "name": "POS", "itemStyle": {"color": '#77dd77'}}
