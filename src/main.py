@@ -56,11 +56,12 @@ with st.container():
             "Select timestamp's range from day 16",
             options=day_16,
             value=(timestamps[16]['start'], timestamps[16]['finish']))
+		
+    # Sentiment selector
+    sents = st.sidebar.multiselect('Select lines to display:', ['POS', 'NEG', 'NEU'], default=['POS', 'NEG', 'NEU'])
 
 # ---- PREPARE INFO
-sent = "NEGPOSNEU"
-sents = split_3(sent)
-
+sent = ''.join(sents)
 try:
 	total_minutes_15 = end_15 - start_15
 	total_minutes_16 = end_16 - start_16
