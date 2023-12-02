@@ -71,6 +71,10 @@ try:
 	# cards info
 	users = data_15['users'] + data_16['users']
 	count = data_15['count'] + data_16['count']
+	counts_15 = max_min_comments(start_15, end_15)
+	counts_16 = max_min_comments(start_16, end_16)
+	maxim = max(counts_15['max_comments']['count'], counts_16['max_comments']['count'])
+	minim = min(counts_15['min_comments']['count'], counts_16['min_comments']['count'])
 	# donut info
 	total_pos = len(data_15['POS_messages']) + len(data_16['POS_messages'])
 	total_neu = len(data_15['NEU_messages']) + len(data_16['NEU_messages'])
@@ -88,19 +92,25 @@ except:
 		end = end_15
 		data = message_15(f"{sent}-{start_15}-{end_15}")
 		users = data['users']
+		counts = max_min_comments(start_15, end_15)
 	except:
 		total_minutes = end_16 - start_16
 		start = start_16
 		end = end_16
 		data = message_16(f"{sent}-{start_16}-{end_16}")
 		users = data['users']
+		counts = max_min_comments(start_16, end_16)
 	# cards info
 	users = data['users']
 	count = data['count']
+	maxim = counts['max_comments']['count']
+	minim = counts['min_comments']['count']
 	# donut info
 	total_pos = len(data['POS_messages'])
 	total_neu = len(data['NEU_messages'])
 	total_neg = len(data['NEG_messages'])
+
+
 
 
 # --- CARDS
@@ -117,8 +127,8 @@ with st.container():
 	col3.image('../img/bubble-chat.png', width=50)
 	col3.metric("Average Comments per Minute", count // total_minutes)
 	
-	col4.metric("Max Comments per Minute", 42)
-	col4.metric("Min Comments per Minute", 42)
+	col4.metric("Max Comments per Minute", maxim)
+	col4.metric("Min Comments per Minute", minim)
 
 st.write('---')
 
