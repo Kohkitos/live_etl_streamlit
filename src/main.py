@@ -13,7 +13,7 @@ from api import *
 
 # --- CONFIG
 
-st.set_page_config(page_title="Investment ETL", page_icon=":red_circle:", layout='wide', initial_sidebar_state='expanded')
+st.set_page_config(page_title="Investiture ETL", page_icon=":red_circle:", layout='wide', initial_sidebar_state='expanded')
 
 # CSS
 with open('style.css') as f:
@@ -30,7 +30,7 @@ day = 'both'
 
 
 with st.container():
-    st.sidebar.markdown("## PEDRO SANCHEZ' INVESTMENT LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
+    st.sidebar.markdown("## PEDRO SANCHEZ' INVESTITURE LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
     
     col1, col2, col3 = st.sidebar.columns(3)
     
