@@ -192,7 +192,7 @@ for sent in sents:
 	message_count = sent_df.groupby('timestamp').size().reset_index(name='count')
 	messages_per_sentiment[sent] = message_count.set_index('timestamp')['count']
 	
-final_df = pd.DataFrame(messages_per_sentiment)
+final_df = pd.DataFrame(messages_per_sentiment).fillna(method='ffill')
 
 filtered_df = final_df[selected_lines]
 
