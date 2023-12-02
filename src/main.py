@@ -133,15 +133,22 @@ st.write('---')
 # --- LINE CHART
 # set-up colours
 colors = {
+	"POS": "#77dd77",
     "NEG": "#ff6961",
-    "NEU": "#fdfd96",
-    "POS": "#77dd77"
+    "NEU": "#fdfd96"
+}
+
+full_sent = {
+      'POS': 'positive',
+      'NEG': 'negative',
+      'NEU': 'neutral'
 }
 
 messages_per_sentiment = {}
 
-available_lines = list(colors.keys())
+available_lines = [full_sent[x] for x in sents]
 selected_lines = st.multiselect('Select lines to display:', available_lines, default=available_lines)
+selected_lines = [x[:3].upper() for x in selected_lines]
 
 if selected_lines == []:
 	selected_lines = available_lines
