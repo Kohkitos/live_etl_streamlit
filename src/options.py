@@ -12,25 +12,25 @@ def donut_option(pos, neg, neu):
 
     if pos == 0:
         data = [
-                {"value": len(pos), "name": "NEG", "itemStyle": {"color": '#ff6961'}},
-                {"value": len(neg), "name": "NEU", "itemStyle": {"color": '#fdfd96'}}
-                ],
+                {"value": neg, "name": "NEG", "itemStyle": {"color": '#ff6961'}},
+                {"value": neu, "name": "NEU", "itemStyle": {"color": '#fdfd96'}}
+                ]
     elif neg == 0:
         data = [
-                {"value": len(pos), "name": "NEG", "itemStyle": {"color": '#ff6961'}},
-                {"value": len(neu), "name": "POS", "itemStyle": {"color": '#77dd77'}}
-                ],
+                {"value": neu, "name": "NEU", "itemStyle": {"color": '#fdfd96'}},
+                {"value": pos, "name": "POS", "itemStyle": {"color": '#77dd77'}}
+                ]
     elif neu == 0:
         data = [
-                {"value": len(pos), "name": "NEG", "itemStyle": {"color": '#ff6961'}},
-                {"value": len(neg), "name": "NEU", "itemStyle": {"color": '#fdfd96'}}
-                ],
+                {"value": neg, "name": "NEG", "itemStyle": {"color": '#ff6961'}},
+                {"value": pos, "name": "POS", "itemStyle": {"color": '#77dd77'}}
+                ]
     else:
         data = [
-                {"value": len(pos), "name": "NEG", "itemStyle": {"color": '#ff6961'}},
-                {"value": len(neg), "name": "NEU", "itemStyle": {"color": '#fdfd96'}},
-                {"value": len(neu), "name": "POS", "itemStyle": {"color": '#77dd77'}}
-                ],
+                {"value": neg, "name": "NEG", "itemStyle": {"color": '#ff6961'}},
+                {"value": neu, "name": "NEU", "itemStyle": {"color": '#fdfd96'}},
+                {"value": pos, "name": "POS", "itemStyle": {"color": '#77dd77'}}
+                ]
 
     options = {
             "tooltip": {"trigger": "item"},

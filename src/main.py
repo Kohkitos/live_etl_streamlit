@@ -5,156 +5,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from streamlit_echarts import st_echarts
-## For connecting to MongoDB
-from pymongo import MongoClient
-from passwords import *
-# For time
-from datetime import datetime, timedelta
 # For graphics options
 from options import donut_option
 
-# ------- API FUNCTIONS (delete later)
-def message_15(param):
-	"""
-	This is a function that returns a JSON serching for the values specified in the param.
+#delete later
+from api import *
 
-	The param should be structure as follows: {SENTIMEN}-{START TIMESTAMP}-{END TIMESTAMP}.
-	{SENTIMENT}: a string with POS, NEG and NEU in any combination (e.g: POSNEG, NEGPOS, POSNEGNEU...)
-	{START TIMESTAMP}: from what time you want to look or in minutes (e.g: 5, 9, 0...)
-	{END TIMESTAMP}: to what time you want to look or in minutes (e.g: 5, 9, 0...)
-
-	Example of params:
-		POSNEGNEU-O-1000 	(this param will return every message).
-		POS-20-25			(this param will return positive messages on day 15 from minute 20 to 25)
-		NEUNEG-0-30			(this param will return neutral and negative message from both days from the beggining to minute 30)
-
-	Args:
-		param (str): a string with the data to request.
-
-	Returns:
-		json: a JSON with the data requested as follows:
-			{message_count: 		int,
-			user_count:				int,
-			SENT_messages:			json}
-	"""
-
-	# split params into parts and split sent into a list
-	params = param.split('-')
-	parts = split_3(params[0])
-
-	# initialize result dictionary and users
-	users = []
-	result = {}
-	result['count'] = 0
-
-	date = 1700041186843002
-	end_date = 1700123057937759
-	for part in parts:
-		messages = list(db.message.find({'sentiment_analysis': part,
-						'timestamp': { '$gte':  int(params[1]), '$lte': int(params[2])},
-						"unix": {"$gte": date, "$lt": end_date}})
-		)
-		# prepare key names
-		name = f'{part}_messages'
-		count_name = f'{part}_count'
-		# prepare count
-		count = len(messages)
-		# update users
-		for message in messages:
-			if message['commentator_id'] in users:
-				continue
-			users.append(message['commentator_id'])
-		# update result
-		result[name] = messages
-		result[count_name] = count
-		result['count'] += count
-
-	# get the user count	
-	result['users'] = len(users)
-	return result
-
-def message_16(param):
-	"""
-	This is a function that returns a JSON serching for the values specified in the param.
-
-	The param should be structure as follows: {SENTIMEN}-{START TIMESTAMP}-{END TIMESTAMP}.
-	{SENTIMENT}: a string with POS, NEG and NEU in any combination (e.g: POSNEG, NEGPOS, POSNEGNEU...)
-	{START TIMESTAMP}: from what time you want to look or in minutes (e.g: 5, 9, 0...)
-	{END TIMESTAMP}: to what time you want to look or in minutes (e.g: 5, 9, 0...)
-
-	Example of params:
-		POSNEGNEU-O-1000 	(this param will return every message).
-		POS-20-25			(this param will return positive messages on day 15 from minute 20 to 25)
-		NEUNEG-0-30			(this param will return neutral and negative message from both days from the beggining to minute 30)
-
-	Args:
-		param (str): a string with the data to request.
-
-	Returns:
-		json: a JSON with the data requested as follows:
-			{message_count: 		int,
-			user_count:				int,
-			SENT_messages:			json}
-	"""
-
-	# split params into parts and split sent into a list
-	params = param.split('-')
-	parts = split_3(params[0])
-
-	# initialize result dictionary and users
-	users = []
-	result = {}
-	result['count'] = 0
-
-	date = 1700123057937759
-	for part in parts:
-		messages = list(db.message.find({'sentiment_analysis': part,
-						'timestamp': { '$gte':  int(params[1]), '$lte': int(params[2])},
-						"unix": {"$gte": date}})
-		)
-		# prepare key names
-		name = f'{part}_messages'
-		count_name = f'{part}_count'
-		# prepare count
-		count = len(messages)
-		# update users
-		for message in messages:
-			if message['commentator_id'] in users:
-				continue
-			users.append(message['commentator_id'])
-		# update result
-		result[name] = messages
-		result[count_name] = count
-		result['count'] += count
-
-	# get the user count	
-	result['users'] = len(users)
-	return result
-
-def split_3(text):
-    parts = [text[i:i + 3] for i in range(0, len(text), 3)]
-    return parts
-
-def get_timestamps(colec):
-    dates = [datetime(2023, 11, 15, 0, 0, 0), datetime(2023, 11, 16, 0, 0, 0)]
-    res = {}
-
-    for date in dates:
-        next_day = date + timedelta(days=1)
-        docs = colec.find({
-            'date': {
-                '$gte': date,
-                '$lt': next_day
-            }
-        })
-
-        ordered = sorted(docs, key=lambda x: x['timestamp'] if 'timestamp' in x else 0)
-        res[date.day] = {
-            'start': ordered[0]['timestamp'] if ordered else None,
-            'finish': ordered[-1]['timestamp'] if ordered else None
-        }
-
-    return res
 # --- CONFIG
 
 st.set_page_config(page_title="Investment ETL", page_icon=":red_circle:", layout='wide', initial_sidebar_state='expanded')
@@ -162,10 +18,6 @@ st.set_page_config(page_title="Investment ETL", page_icon=":red_circle:", layout
 # CSS
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-# --- DELETE LATER (this will be done by the API)
-
-db = MongoClient(STR_CONN).final_project
 
 # --- SIDEBAR
 
@@ -223,19 +75,25 @@ try:
 	total_pos = len(data_15['POS_messages']) + len(data_16['POS_messages'])
 	total_neu = len(data_15['NEU_messages']) + len(data_16['NEU_messages'])
 	total_neg = len(data_15['NEG_messages']) + len(data_16['NEG_messages'])
+	
+	data ={
+        'POS_messages': data_15['POS_messages'] + data_16['POS_messages'],
+        'NEU_messages': data_15['NEU_messages'] + data_16['NEU_messages'],
+        'NEG_messages': data_15['NEG_messages'] + data_16['NEG_messages']
+    }
 except:
 	try:
 		total_minutes = end_15 - start_15
 		start = start_15
 		end = end_15
 		data = message_15(f"{sent}-{start_15}-{end_15}")
-		users = data_15['users']
+		users = data['users']
 	except:
 		total_minutes = end_16 - start_16
 		start = start_16
 		end = end_16
 		data = message_16(f"{sent}-{start_16}-{end_16}")
-		users = data_15['users']
+		users = data['users']
 	# cards info
 	users = data['users']
 	count = data['count']
@@ -283,8 +141,8 @@ def apply_style_to_row(row):
 with st.container():
 	donut, table = st.columns([1, 2])
 	with donut:
-		options = donut_option()
-		st.markdown('### Sentiment Anal')
+		options = donut_option(total_pos, total_neg, total_neu)
+		st.markdown('### Sentiment Analysis')
 		st_echarts(options=options, height="300px")
 	
 	with table:
