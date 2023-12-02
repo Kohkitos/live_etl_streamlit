@@ -1,7 +1,7 @@
 from api import *
 
 def donut_option(pos, neg, neu):
-    """_summary_
+    """Sets up the options for the donut diagram according to the sentiment anlysis required.
 
     Args:
         pos (int): amount of positive messages.
@@ -102,14 +102,15 @@ class web_data():
             ## Initiate a dictionary with -1 meaning there are none
             self.message_count = {'POS': -1, 'NEU': -1, 'NEG': -1}
             self.data = {'POS_messages': -1, 'NEU_messages': -1, 'NEG_messages': -1}
+            # for pos
             if len(self.data_15['POS_messages']) >= 0 or len(self.data_16['POS_messages']) >= 0:
                 self.message_count['POS'] = len(self.data_15['POS_messages']) + len(self.data_16['POS_messages'])
                 self.data['POS_MESSAGES'] = self.data_15['POS_messages'] + self.data_16['POS_messages']
-
+            # for neu
             if len(self.data_15['NEU_messages']) >= 0 or len(self.data_16['NEU_messages']) >= 0:
                 self.message_count['NEU'] = len(self.data_15['NEU_messages']) + len(self.data_16['NEU_messages'])
                 self.data['NEU_messages'] = self.data_15['NEU_messages'] + self.data_16['NEU_messages']
-
+            # for neg
             if len(self.data_15['NEG_messages']) >= 0 or len(self.data_16['NEG_messages']) >= 0:
                 self.message_count['NEG'] = len(self.data_15['NEG_messages']) + len(self.data_16['NEG_messages'])
                 self.data['NEG_messages'] = self.data_15['NEG_messages'] + self.data_16['NEG_messages']
