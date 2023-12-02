@@ -171,8 +171,7 @@ colors = {
 
 messages_per_sentiment = {}
 
-available_lines = ['POS', 'NEG', 'NEU']
-
+available_lines = list(colors.keys())
 selected_lines = st.multiselect('Select lines to display:', available_lines, default=available_lines)
 
 if selected_lines == []:
@@ -187,19 +186,7 @@ final_df = pd.DataFrame(messages_per_sentiment)
 
 filtered_df = final_df[selected_lines]
 
-plot_colors = []
-used_sents = []
-
-for i,row in sort_df.iterrows():
-	sent = row['sentiment_analysis']
-	if (sent not in used_sents) & (sent in selected_lines):
-		used_sents.append(sent)
-		plot_colors.append(colors[sent])
-	
-	if len(used_sents) == len(sents):
-		break
-
-filtered_colors = [plot_colors[i] for i, sent in enumerate(used_sents) if sent in selected_lines]
+filtered_colors = [colors[line] for line in selected_lines]
 	
 
 with st.container():
