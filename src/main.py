@@ -32,6 +32,7 @@ day = 'both'
 with st.container():
     st.sidebar.markdown("## PEDRO SANCHEZ' INVESTITURE LIVE CHAT ANALYSIS\n`Iron Hack's Final Project`")
     
+	# Day Selection
     col1, col2, col3 = st.sidebar.columns(3)
     
     if col1.button('Day 15'):
@@ -43,6 +44,7 @@ with st.container():
 
     st.sidebar.markdown(f'#### The day selected is {day}')
 
+	# Timestamp range selector
     if day != '16':
         start_15, end_15 = st.sidebar.select_slider(
             "Select timestamp's range from day 15",
@@ -62,10 +64,10 @@ sents = split_3(sent)
 try:
 	total_minutes_15 = end_15 - start_15
 	total_minutes_16 = end_16 - start_16
-	total_minutes = (total_minutes_16 + total_minutes_15) // 2
+	total_minutes = total_minutes_16 + total_minutes_15
 	start = min(start_15, start_16)
 	end = max(end_15, end_16)
-
+	# load messages
 	data_15 = message_15(f"{sent}-{start_15}-{end_15}")
 	data_16 = message_16(f"{sent}-{start_16}-{end_16}")
 	# cards info
