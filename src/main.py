@@ -155,6 +155,9 @@ def apply_style_to_row(row):
     
     return combined_style
 
+data_df = data.data
+
+
 with st.container():
 	donut, table = st.columns([1, 2])
 	with donut:
@@ -167,7 +170,7 @@ with st.container():
 		df = pd.DataFrame()
 		for sent in sents:
 			key = f"{sent}_messages"
-			part_df = pd.DataFrame(data[key])
+			part_df = pd.DataFrame(data_df[key])
 			df = pd.concat([df, part_df], ignore_index=True)
 		sort_df = df.sort_values(by='date').reset_index(drop=True)
 
