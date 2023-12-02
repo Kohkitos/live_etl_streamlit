@@ -9,7 +9,7 @@ def donut_option(pos, neg, neu):
         neu (int): amount of neutral messages.
 
     Returns:
-        _type_: _description_
+        options (json): options for an echart pie chart.
     """
 
     if pos == -1:
@@ -105,17 +105,20 @@ class web_data():
             self.message_count = {'POS': -1, 'NEU': -1, 'NEG': -1}
             self.data = {'POS_messages': -1, 'NEU_messages': -1, 'NEG_messages': -1}
             # for pos
-            if (len(self.data_15['POS_messages']) > 0) or (len(self.data_16['POS_messages']) > 0):
+            try:
                 self.message_count['POS'] = len(self.data_15['POS_messages']) + len(self.data_16['POS_messages'])
                 self.data['POS_MESSAGES'] = self.data_15['POS_messages'] + self.data_16['POS_messages']
+            except: pass
             # for neu
-            if (len(self.data_15['NEU_messages']) > 0) or (len(self.data_16['NEU_messages']) > 0):
+            try:
                 self.message_count['NEU'] = len(self.data_15['NEU_messages']) + len(self.data_16['NEU_messages'])
                 self.data['NEU_messages'] = self.data_15['NEU_messages'] + self.data_16['NEU_messages']
+            except: pass
             # for neg
-            if (len(self.data_15['NEG_messages']) > 0) or (len(self.data_16['NEG_messages']) > 0):
+            try:
                 self.message_count['NEG'] = len(self.data_15['NEG_messages']) + len(self.data_16['NEG_messages'])
                 self.data['NEG_messages'] = self.data_15['NEG_messages'] + self.data_16['NEG_messages']
+            except: pass
         else:
             # data for later
             self.total_minutes = end - start
@@ -127,11 +130,12 @@ class web_data():
             self.minim = counts['min_comments']['count']
             # donut info
             self.message_count = {'POS': -1, 'NEU': -1, 'NEG': -1}
-            if len(self.data['POS_messages']) > 0:
+            try:
                 self.message_count['POS'] = len(self.data['POS_messages'])
-            # for neu
-            if len(self.data['NEU_messages']) > 0:
+            except: pass
+            try:
                 self.message_count['NEU'] = len(self.data['NEU_messages'])
-            # for neg
-            if len(self.data['NEG_messages']) > 0:
+            except: pass
+            try:
                 self.message_count['NEG'] = len(self.data['NEG_messages'])
+            except: pass
