@@ -22,6 +22,19 @@ This dashboard is based on real-time sentiment analysis data obtained from the C
 
 The data used in this dashboard is sourced from the [CARMELA API](https://github.com/Kohkitos/api_live_etl), which fetches sentiment analysis data from live YouTube comments during Pedro Sanchez's investiture.
 
+## Acknowledgments
+
+I'd like to acknowledge the following tutorials on YouTube that contributed to my learning and development of this Streamlit dashboard:
+
+1. **Basic Streamlit Tutorial by "Coding is Fun"**
+   - [Tutorial Link](https://www.youtube.com/watch?v=VqgUkExPvLY)
+
+2. **Dashboard-focused Streamlit Tutorial by "Data Professor"**
+   - [Tutorial Link](https://www.youtube.com/watch?v=o6wQ8zAkLxc&t=1s&pp=ygUJc3RyZWFtbGl0)
+
+These tutorials were instrumental in helping me understand and build the functionalities showcased in this Streamlit dashboard. I'm grateful for the invaluable learning resources provided by these creators.
+
+
 ## License
 
 This Streamlit dashboard is available under the MIT License. Refer to the [LICENSE](LICENSE) file for details.
