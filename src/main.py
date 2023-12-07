@@ -162,6 +162,8 @@ final_df = pd.DataFrame(messages_per_sentiment).fillna(method='ffill')
 
 filtered_df = final_df[selected_lines]
 
+selected_lines.sort()
+
 filtered_colors = [colors[line] for line in selected_lines]
 	
 
