@@ -72,12 +72,12 @@ class web_data():
         """
 
         # Check if we want both days or one
-        if start_16 <= 0:
+        if start_16 < 0:
             self.days = 0
             start, end = start_15, end_15
             self.data = message_15(f"{sent}-{start_15}-{end_15}")
 
-        elif start_15 <= 0:
+        elif start_15 < 0:
             self.days = 0
             start, end = start_16, end_16
             self.data = message_16(f"{sent}-{start_16}-{end_16}")
@@ -107,7 +107,7 @@ class web_data():
             # for pos
             try:
                 self.message_count['POS'] = len(self.data_15['POS_messages']) + len(self.data_16['POS_messages'])
-                self.data['POS_MESSAGES'] = self.data_15['POS_messages'] + self.data_16['POS_messages']
+                self.data['POS_messages'] = self.data_15['POS_messages'] + self.data_16['POS_messages']
             except: pass
             # for neu
             try:

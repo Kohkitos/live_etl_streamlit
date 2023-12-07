@@ -50,14 +50,16 @@ with st.container():
             "Select timestamp's range from day 15",
             options=day_15,
             value=(timestamps[15]['start'], timestamps[15]['finish']))
-        start_16, end_16 = -1, -1
+        if day == 15:
+            start_16, end_16 = -1, -1
 
     if day != '15':
         start_16, end_16 = st.sidebar.select_slider(
             "Select timestamp's range from day 16",
             options=day_16,
             value=(timestamps[16]['start'], timestamps[16]['finish']))
-        start_15, end_15 = -1, -1
+        if day == 16:
+            start_15, end_15 = -1, -1
 
 
 		
@@ -105,7 +107,6 @@ def apply_style_to_row(row):
     return combined_style
 
 data_df = data.data
-
 
 with st.container():
 	donut, table = st.columns([1, 2])
